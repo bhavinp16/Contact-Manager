@@ -1,4 +1,0 @@
-{
-	"mongoURI": "mongodb+srv://bhavinp16:0yky6PHDGq3BGzty@contactmanager.ynrsv.mongodb.net/ContactManager?retryWrites=true&w=majority",
-	"jwtSecret": "secretbsp"
-}
