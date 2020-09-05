@@ -6,6 +6,7 @@ const { check, validationResult } = require('express-validator');
 
 const User = require('../models/User');
 const Contact = require('../models/Contact');
+const { findByIdAndDelete } = require('../models/User');
 
 // @route   GET api/contacts
 // @desc    Get all users contacts
@@ -93,8 +94,26 @@ router.put('/:id', auth, async (req, res) => {
 // @route   DELETE api/users
 // @desc    Delete contact
 // @access  Private
-router.delete('/:id', (req, res) => {
-	res.send('Delete contact');
+router.delete('/:id', auth, async (req, res) => {
+	try {
+		let contact = await Contact.findById(req.params.id);
+
+		if (!contact) {
+			return res.status(404).json({ msg: 'Contact not found' });
+		}
+
+		if (contact.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Not authorized' });
+		}
+
+		//dont use findbyidandDelete
+		await Contact.findByIdAndRemove(req.params.id);
+
+		res.json({ msg: 'Contact deleted' });
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send('Server Error');
+	}
 });
 
 module.exports = router;
